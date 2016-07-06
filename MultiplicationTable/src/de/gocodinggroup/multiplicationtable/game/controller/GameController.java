@@ -4,6 +4,7 @@ import java.util.*;
 
 import de.gocodinggroup.multiplicationtable.game.model.*;
 import de.gocodinggroup.multiplicationtable.game.model.gameentites.*;
+import de.gocodinggroup.multiplicationtable.kinect.*;
 import de.gocodinggroup.multiplicationtable.util.*;
 import de.gocodinggroup.multiplicationtable.util.events.*;
 import javafx.animation.*;
@@ -27,7 +28,13 @@ public class GameController extends Application {
 	private Scene mainScene;
 	// private Stage primaryStage;
 
+	/* TODO: needs refactoring! */
+	private static Kinect kinect;
+
 	public static void main(String[] args) {
+		kinect = new Kinect();
+		kinect.start(Kinect.DEPTH | Kinect.COLOR | Kinect.SKELETON | Kinect.XYZ | Kinect.PLAYER_INDEX);
+		// kinect.showViewerDialog();
 		launch(args);
 	}
 

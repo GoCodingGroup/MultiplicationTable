@@ -7,5 +7,7 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="MultiplicationTable/lib/natives"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/jar/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="lib/jar/jogl-all.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
