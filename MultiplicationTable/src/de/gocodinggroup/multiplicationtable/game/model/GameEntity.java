@@ -1,0 +1,102 @@
+package de.gocodinggroup.multiplicationtable.game.model;
+
+import de.gocodinggroup.multiplicationtable.util.*;
+import de.gocodinggroup.multiplicationtable.util.events.*;
+
+/**
+ * Each entity in the game's world has to be derived from this class
+ * 
+ * @author Dominik
+ *
+ */
+public abstract class GameEntity {
+	private int locationX, locationY;
+	private int width, height;
+	private int speedX, speedY;
+
+	public GameEntity(int locationX, int locationY, int width, int height) {
+		this.locationX = locationX;
+		this.locationY = locationY;
+		this.width = width;
+		this.height = height;
+		this.speedX = 0;
+		this.speedY = 0;
+
+		// Register this entity for update event
+		EventManager.registerEventListenerForEvent(MoveEvent.class, (event) -> move(((MoveEvent) event).getNow()));
+	}
+
+	private void move(long now) {
+		// TODO: use delta calculation with now to smoothen out animation (non
+		// integer positions?)
+		this.locationX += this.speedX;
+		this.locationY += this.speedY;
+	}
+
+	/* Getters and Setters */
+
+	public int getLocationX() {
+		return locationX;
+	}
+
+	public void setLocationX(int locationX) {
+		this.locationX = locationX;
+	}
+
+	public int getLocationY() {
+		return locationY;
+	}
+
+	public void setLocationY(int locationY) {
+		this.locationY = locationY;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public void setWidth(int width) {
+		this.width = width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public void setHeight(int height) {
+		this.height = height;
+	}
+
+	public int getSpeedX() {
+		return speedX;
+	}
+
+	public void setSpeedX(int speedX) {
+		this.speedX = speedX;
+	}
+
+	public int getSpeedY() {
+		return speedY;
+	}
+
+	public void setSpeedY(int speedY) {
+		this.speedY = speedY;
+	}
+
+	/* Convenience methods */
+
+	public void setSpeed(int speedX, int speedY) {
+		this.speedX = speedX;
+		this.speedY = speedY;
+	}
+
+	public void setLocation(int locationX, int locationY) {
+		this.locationX = locationX;
+		this.locationY = locationY;
+	}
+
+	public void setDimensions(int width, int height) {
+		this.width = width;
+		this.height = height;
+	}
+}
