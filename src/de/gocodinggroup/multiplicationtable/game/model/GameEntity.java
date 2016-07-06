@@ -2,6 +2,7 @@ package de.gocodinggroup.multiplicationtable.game.model;
 
 import de.gocodinggroup.multiplicationtable.util.*;
 import de.gocodinggroup.multiplicationtable.util.events.*;
+import javafx.scene.*;
 
 /**
  * Each entity in the game's world has to be derived from this class
@@ -10,9 +11,11 @@ import de.gocodinggroup.multiplicationtable.util.events.*;
  *
  */
 public abstract class GameEntity {
-	private int locationX, locationY;
-	private int width, height;
-	private int speedX, speedY;
+	protected int locationX, locationY;
+	protected int width, height;
+	protected int speedX, speedY;
+
+	protected Node fxRepresentation;
 
 	public GameEntity(int locationX, int locationY, int width, int height) {
 		this.locationX = locationX;
@@ -26,11 +29,13 @@ public abstract class GameEntity {
 		EventManager.registerEventListenerForEvent(MoveEvent.class, (event) -> move(((MoveEvent) event).getNow()));
 	}
 
-	private void move(long now) {
-		// TODO: use delta calculation with now to smoothen out animation (non
-		// integer positions?)
+	protected void move(long now) {
 		this.locationX += this.speedX;
 		this.locationY += this.speedY;
+	}
+
+	public Node getFXRepresentation() {
+		return this.fxRepresentation;
 	}
 
 	/* Getters and Setters */

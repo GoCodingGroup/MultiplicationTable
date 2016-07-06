@@ -4,12 +4,14 @@ import java.util.*;
 
 import de.gocodinggroup.multiplicationtable.game.model.*;
 import de.gocodinggroup.multiplicationtable.game.model.gameentites.*;
-import de.gocodinggroup.multiplicationtable.kinect.*;
+import de.gocodinggroup.multiplicationtable.input.*;
 import de.gocodinggroup.multiplicationtable.util.*;
 import de.gocodinggroup.multiplicationtable.util.events.*;
 import javafx.animation.*;
 import javafx.application.*;
 import javafx.scene.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
 import javafx.stage.*;
 
 /**
@@ -17,24 +19,25 @@ import javafx.stage.*;
  * well)
  */
 public class GameController extends Application {
-	public static final int WORLD_WIDTH = 500;
+	public static final int WORLD_WIDTH = 1000;
 	public static final int WORLD_HEIGHT = WORLD_WIDTH;
 	private static Random random;
 
+	// All Game entities (so that we can change our root node at will, f.e. for
+	// reordering subnodes)
 	private List<GameEntity> entities;
 
-	/* TODO: do we need this? */
+	// Save this so that we can add BubbleEntites
 	private Group rootNode;
-	private Scene mainScene;
-	// private Stage primaryStage;
 
-	/* TODO: needs refactoring! */
-	private static Kinect kinect;
+	// Game Background
+	private Rectangle gameBoardBackground;
+
+	// Input provider for this game
+	private static InputProvider input;
 
 	public static void main(String[] args) {
-		kinect = new Kinect();
-		kinect.start(Kinect.DEPTH | Kinect.COLOR | Kinect.SKELETON | Kinect.XYZ | Kinect.PLAYER_INDEX);
-		// kinect.showViewerDialog();
+		// Launch javaFX game
 		launch(args);
 	}
 
@@ -45,9 +48,18 @@ public class GameController extends Application {
 		return random;
 	}
 
+	public static InputProvider getInputProvider() {
+		return input;
+	}
+
 	public GameController() {
 		this.entities = new ArrayList<>();
 		EventManager.registerEventListenerForEvent(BubbleHitEvent.class, (event) -> bubbleHit((BubbleHitEvent) event));
+
+		this.gameBoardBackground = new Rectangle(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+		this.gameBoardBackground.setFill(Color.BLACK);
+		this.gameBoardBackground.setStroke(Color.GREEN);
+		this.gameBoardBackground.setStrokeWidth(5);
 	}
 
 	@Override
@@ -56,11 +68,36 @@ public class GameController extends Application {
 		primaryStage.setTitle("Multiplication Table");
 
 		try {
-			/* TODO: do we need this (?) */
 			this.rootNode = new Group();
-			this.mainScene = new Scene(rootNode, WORLD_WIDTH, WORLD_HEIGHT);
+			Scene mainScene = new Scene(rootNode, WORLD_WIDTH, WORLD_HEIGHT);
 
+			/*
+			 * Change this line of code to select desired input
+			 */
+			input = new MouseInput(this.rootNode);
+			// input = new KinectInput();
+
+			// Add background stuff
+			this.rootNode.getChildren().add(this.gameBoardBackground);
+
+			/* TODO: tmp code */
 			addBubble();
+			addBubble();
+			addBubble();
+			addBubble();
+			addBubble();
+			addBubble();
+			addBubble();
+			addBubble();
+			addBubble();
+			addBubble();
+			addBubble();
+			// Always add player last so that he will be drawn over everything
+			// TODO: find better way
+			addPlayer();
+
+			for (GameEntity entity : this.entities)
+				this.rootNode.getChildren().add(entity.getFXRepresentation());
 
 			primaryStage.setScene(mainScene);
 			primaryStage.show();
@@ -68,21 +105,20 @@ public class GameController extends Application {
 			/* Start Game */
 			UpdateTimer timer = new UpdateTimer();
 			timer.start();
-
-			/* TODO: TMP (?) */
-			// this.primaryStage = primaryStage;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void addBubble() {
-		// TODO: refactor system so that this can become less calls
+	private void addPlayer() {
+		PlayerEntity entity = new PlayerEntity(0, 0, 20, 20);
+		this.entities.add(entity);
+	}
 
-		BubbleEntity entity = new BubbleEntity(250, 250, 30, 30);
+	private void addBubble() {
+		BubbleEntity entity = new BubbleEntity(250, 250, 30, 30, "Halleluja!");
 		entity.setSpeed(getRandom().nextInt(8) - 4, getRandom().nextInt(8) - 4);
 		this.entities.add(entity);
-		this.rootNode.getChildren().add(entity.getShape());
 	}
 
 	private void bubbleHit(BubbleHitEvent event) {
@@ -95,7 +131,7 @@ public class GameController extends Application {
 			// Move all GameObjects
 			EventManager.dispatchEventAndWait(new MoveEvent(now));
 
-			// TODO: TMP (?); Update Game (Physics, logic etc)
+			// Update Game (Physics, logic etc)
 			EventManager.dispatchEventAndWait(new UpdateEvent(now));
 		}
 	}
