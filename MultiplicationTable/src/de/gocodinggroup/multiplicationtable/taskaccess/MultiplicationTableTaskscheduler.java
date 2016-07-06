@@ -2,12 +2,12 @@ package de.gocodinggroup.multiplicationtable.taskaccess;
 
 import java.util.Random;
 
-public class MultiplicationTableTaskscheduler implements Taskscheduler<String> {
+public class MultiplicationTableTaskscheduler implements Taskscheduler<String, String> {
 	private static final int MINIMUM_FACTOR = 1;
 	private static final int MAXIMUM_FACTOR = 10;
 
 	@Override
-	public Task<String> getRandomTask() {
+	public Task<String> getRandomTask(Category<String> category) {
 		int firstFactor = getRandomNumberBetween(MINIMUM_FACTOR, MAXIMUM_FACTOR);
 		int secondFactor = getRandomNumberBetween(MINIMUM_FACTOR, MAXIMUM_FACTOR);
 		Task<String> task = new MultiplicationTableTask(firstFactor, secondFactor);
@@ -20,9 +20,9 @@ public class MultiplicationTableTaskscheduler implements Taskscheduler<String> {
 	}
 
 	@Override
-	public Task<String> getNextTaskForPerson(Person person) {
+	public Task<String> getNextTaskForPerson(Person person, Category<String> category) {
 		// TODO Auto-generated method stub
-		return getRandomTask();
+		return getRandomTask(category);
 	}
 
 	@Override
