@@ -38,7 +38,7 @@ public class MultiplicationTableTask implements Task<String> {
 
 	@Override
 	public String getSolution() {
-		int result = firstFactor*secondFactor;
+		int result = firstFactor * secondFactor;
 		String resultAsString = String.valueOf(result);
 		return resultAsString;
 	}
@@ -48,11 +48,11 @@ public class MultiplicationTableTask implements Task<String> {
 		return (firstFactor - 1) * 100 + secondFactor;
 	}
 
-	protected int getFirstFactor() {
+	public int getFirstFactor() {
 		return firstFactor;
 	}
 
-	protected int getSecondFactor() {
+	public int getSecondFactor() {
 		return secondFactor;
 	}
 
