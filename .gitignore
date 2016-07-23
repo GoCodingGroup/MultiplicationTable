@@ -1,3 +1,6 @@
+# gradle
+.gradle/
+
 # custom exclusions (license violations potentially)
 lib/
 

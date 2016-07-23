@@ -1,0 +1,101 @@
+// Configure repo for junit download
+buildscript {
+	repositories {
+  		jcenter()
+  	}
+	
+	dependencies {
+    	classpath 'org.ajoberstar:gradle-git:1.5.1'
+	}
+}
+
+// Add repo for Junit
+repositories {
+	mavenCentral()
+}
+
+// General plugins
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+//apply plugin: 'org.ajoberstar.grgit'
+
+// Configure java src dir (gradle will configure it wiredly by default)
+sourceSets.main.java.srcDir 'src'
+
+/* _______________________________________________ */
+/* |                                             | */
+/* |       Tasks for eclipse j4k setup           | */
+/* |_____________________________________________| */
+
+// Task to download j4kDemoRepo
+import org.ajoberstar.grgit.*
+task clonej4k << {
+	if (!file('download/j4kdemo').exists())
+		Grgit.clone(dir: file('download/j4kdemo'), uri: 'http://research.dwi.ufl.edu/git/j4kdemo')
+}
+
+task copyj4kLib(type: Copy) {
+	from('download/j4kdemo/lib/') {
+		include 'ufdw.jar'
+	}
+	into 'lib/jar/'
+}
+
+task copyj4kNatives(type: Copy) {
+	from('download/j4kdemo/') {
+		include '*.dll'
+	}
+	into 'lib/natives/'
+}
+
+task cleanj4kLeftover(type: Delete) {
+	delete 'download'
+	followSymlinks = false
+}
+
+task addj4kNatives << {
+	def nativesDir = "${projectDir}/lib/natives".replace('\\', '/')
+	eclipse.classpath.file.withXml {XmlProvider provider ->
+        provider.asNode().classpathentry.findAll{it.'@path'.contains('lib/jar/ufdw.jar')}
+        	.each {
+            	it.appendNode('attributes')
+                	.appendNode('attribute', [name:'org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY', value:nativesDir])
+        }
+    }
+}
+
+task fixEclipseError << {
+	eclipse.classpath.file.withXml {XmlProvider provider ->
+        provider.asNode().classpathentry.findAll{it.'@kind'.equals('con')}
+        .each {
+        	it.'@path'= "org.eclipse.jdt.launching.JRE_CONTAINER"
+        }
+    }
+}
+
+/* Configure task chain:
+ *
+ * 1. download j4kDemo repo to gain easy access to needed libraries
+ * 2. move ufdw.jar and it's natives to apropriate folders
+ * 3. clean j4k leftover files
+ * 4. add natives to ufdw.jar
+ * 5. configure eclipse jre to fix errors
+ */
+tasks.eclipse.dependsOn clonej4k
+tasks.clonej4k.finalizedBy copyj4kLib
+tasks.copyj4kLib.finalizedBy copyj4kNatives
+tasks.copyj4kNatives.finalizedBy cleanj4kLeftover
+tasks.cleanj4kLeftover.finalizedBy addj4kNatives
+tasks.addj4kNatives.finalizedBy fixEclipseError
+
+// Configure main class (eclipse run target)
+mainClassName = 'de.gocodinggroup.multiplicationtable.game.controller.GameController'
+
+// Load all dependencies
+dependencies {
+	compile files('lib/jar/ufdw.jar')
+
+	testCompile 'junit:junit:4.12'
+}

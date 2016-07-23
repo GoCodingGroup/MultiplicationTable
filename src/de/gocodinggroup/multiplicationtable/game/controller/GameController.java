@@ -74,8 +74,8 @@ public class GameController extends Application {
 			/*
 			 * Change this line of code to select desired input
 			 */
-			input = new MouseInput(this.rootNode);
-			// input = new KinectInput();
+			//input = new MouseInput(this.rootNode);
+			input = new KinectInput();
 
 			// Add background stuff
 			this.rootNode.getChildren().add(this.gameBoardBackground);
