@@ -2,9 +2,9 @@ package de.gocodinggroup.multiplicationtable.taskaccess.test;
 
 import static org.junit.Assert.*;
 
-import org.junit.Test;
+import org.junit.*;
 
-import de.gocodinggroup.multiplicationtable.taskaccess.MultiplicationTableTask;
+import de.gocodinggroup.multiplicationtable.taskaccess.*;
 
 public class MultiplicationTableTaskTest {
 
@@ -15,7 +15,7 @@ public class MultiplicationTableTaskTest {
 		MultiplicationTableTask task = new MultiplicationTableTask(firstFactor, secondFactor);
 		assertEquals(1, task.getFirstFactor());
 	}
-	
+
 	@Test
 	public void testSecondFactorIsGreaterThanOrEqualToOne() {
 		int firstFactor = 1;
@@ -23,7 +23,7 @@ public class MultiplicationTableTaskTest {
 		MultiplicationTableTask task = new MultiplicationTableTask(firstFactor, secondFactor);
 		assertEquals(1, task.getSecondFactor());
 	}
-	
+
 	@Test
 	public void testFirstFactorIsSmallerThanOrEqualToHundred() {
 		int firstFactor = 101;
@@ -31,7 +31,7 @@ public class MultiplicationTableTaskTest {
 		MultiplicationTableTask task = new MultiplicationTableTask(firstFactor, secondFactor);
 		assertEquals(100, task.getFirstFactor());
 	}
-	
+
 	@Test
 	public void testSecondFactorIsSmallerThanOrEqualToHundred() {
 		int firstFactor = 1;
@@ -39,7 +39,6 @@ public class MultiplicationTableTaskTest {
 		MultiplicationTableTask task = new MultiplicationTableTask(firstFactor, secondFactor);
 		assertEquals(100, task.getSecondFactor());
 	}
-
 
 	@Test
 	public void testGetProblem() {
@@ -64,6 +63,7 @@ public class MultiplicationTableTaskTest {
 		MultiplicationTableTask task = new MultiplicationTableTask(firstFactor, secondFactor);
 		assertEquals(1, task.getID());
 	}
+
 	@Test
 	public void testGetIDFirstFactorIsOneSecondFactorIs100() {
 		int firstFactor = 1;
@@ -71,7 +71,7 @@ public class MultiplicationTableTaskTest {
 		MultiplicationTableTask task = new MultiplicationTableTask(firstFactor, secondFactor);
 		assertEquals(100, task.getID());
 	}
-	
+
 	@Test
 	public void testGetIDFirstFactorIsTwoSecondFactorIsOne() {
 		int firstFactor = 2;
@@ -79,7 +79,7 @@ public class MultiplicationTableTaskTest {
 		MultiplicationTableTask task = new MultiplicationTableTask(firstFactor, secondFactor);
 		assertEquals(101, task.getID());
 	}
-	
+
 	@Test
 	public void testGetIDFirstFactorIsTwoSecondFactorIsHundred() {
 		int firstFactor = 2;

@@ -38,8 +38,8 @@ public class EventManager {
 	}
 
 	/**
-	 * Dispatches an Event immediately on the current Thread and waits until all registered listeners have acted
-	 * upon said event
+	 * Dispatches an Event immediately on the current Thread and waits until all
+	 * registered listeners have acted upon said event
 	 * 
 	 * @param event
 	 */
@@ -49,7 +49,8 @@ public class EventManager {
 	}
 
 	/**
-	 * Dispatches an event asynchronously on the JavaFX-Main thread and immediately returns execution flow to caller
+	 * Dispatches an event asynchronously on the JavaFX-Main thread and
+	 * immediately returns execution flow to caller
 	 * 
 	 * @param event
 	 */

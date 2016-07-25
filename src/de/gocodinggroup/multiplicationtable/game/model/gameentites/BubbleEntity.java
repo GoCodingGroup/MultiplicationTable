@@ -24,12 +24,7 @@ public class BubbleEntity extends GameEntity {
 
 		this.text = new Text(displayText);
 		this.text.setBoundsType(TextBoundsType.VISUAL);
-		// @formatter:off
-		this.text.setStyle(
-                "-fx-font-family: \"Times New Roman\";" +
-                "-fx-font-size: 15px;"
-        );
-		// @formatter:on
+		this.text.setStyle("-fx-font-family: \"Times New Roman\";" + "-fx-font-size: 15px;");
 		this.text.setFill(Color.WHITE);
 
 		this.circle = new Circle();
