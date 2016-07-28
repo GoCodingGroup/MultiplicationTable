@@ -2,7 +2,6 @@ package de.gocodinggroup.multiplicationtable.game.controller;
 
 import java.util.*;
 
-import de.gocodinggroup.multiplicationtable.game.model.*;
 import de.gocodinggroup.multiplicationtable.game.model.gameentites.*;
 import de.gocodinggroup.multiplicationtable.input.*;
 import de.gocodinggroup.multiplicationtable.util.*;
@@ -23,9 +22,8 @@ public class GameController extends Application {
 	public static final int WORLD_HEIGHT = WORLD_WIDTH;
 	private static Random random;
 
-	// All Game entities (so that we can change our root node at will, f.e. for
-	// reordering subnodes)
-	private List<GameEntity> entities;
+	// Player entity
+	private PlayerEntity player;
 
 	// Save this so that we can add BubbleEntites
 	private Group rootNode;
@@ -42,8 +40,7 @@ public class GameController extends Application {
 	}
 
 	public static Random getRandom() {
-		if (random == null)
-			random = new Random();
+		if (random == null) random = new Random();
 
 		return random;
 	}
@@ -52,14 +49,29 @@ public class GameController extends Application {
 		return input;
 	}
 
-	public GameController() {
-		this.entities = new ArrayList<>();
-		EventManager.registerEventListenerForEvent(BubbleHitEvent.class, (event) -> bubbleHit((BubbleHitEvent) event));
+	private void setupGame() {
+		// Register for the event that a bubble is hit, so that we can verify
+		// player input and generate a new task if wanted
+		EventManager.registerEventListenerForEvent(BubbleHitEvent.class, e -> bubbleHit());
 
+		/*
+		 * Create input method
+		 */
+		input = new MouseInput(this.rootNode);
+		// input = new KinectInput();
+
+		// Setup background
 		this.gameBoardBackground = new Rectangle(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 		this.gameBoardBackground.setFill(Color.BLACK);
 		this.gameBoardBackground.setStroke(Color.GREEN);
 		this.gameBoardBackground.setStrokeWidth(5);
+		this.rootNode.getChildren().add(this.gameBoardBackground);
+
+		// Create player:
+		this.player = new PlayerEntity(0, 0, 25, 25);
+
+		// Generate initial task
+		generateTask();
 	}
 
 	@Override
@@ -71,68 +83,56 @@ public class GameController extends Application {
 			this.rootNode = new Group();
 			Scene mainScene = new Scene(rootNode, WORLD_WIDTH, WORLD_HEIGHT);
 
-			/*
-			 * Change this line of code to select desired input
-			 */
-			// input = new MouseInput(this.rootNode);
-			input = new KinectInput();
-
-			// Add background stuff
-			this.rootNode.getChildren().add(this.gameBoardBackground);
-
-			/* TODO: tmp code */
-			addBubble();
-			addBubble();
-			addBubble();
-			addBubble();
-			addBubble();
-			addBubble();
-			addBubble();
-			addBubble();
-			addBubble();
-			addBubble();
-			addBubble();
-			// Always add player last so that he will be drawn over everything
-			// TODO: find better way
-			addPlayer();
-
-			for (GameEntity entity : this.entities)
-				this.rootNode.getChildren().add(entity.getFXRepresentation());
+			// Setup all of our game
+			setupGame();
 
 			primaryStage.setScene(mainScene);
 			primaryStage.show();
 
 			/* Start Game */
-			UpdateTimer timer = new UpdateTimer();
-			timer.start();
+			new AnimationTimer() {
+				@Override
+				public void handle(long now) {
+					// Move all GameObjects
+					EventManager.dispatchEventAndWait(new MoveEvent(now));
+
+					// Update Game (Physics, logic etc)
+					EventManager.dispatchEventAndWait(new UpdateEvent(now));
+				}
+			}.start();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void addPlayer() {
-		PlayerEntity entity = new PlayerEntity(0, 0, 20, 20);
-		this.entities.add(entity);
-	}
-
 	private void addBubble() {
 		BubbleEntity entity = new BubbleEntity(250, 250, 30, 30, "Halleluja!");
 		entity.setSpeed(getRandom().nextInt(8) - 4, getRandom().nextInt(8) - 4);
-		this.entities.add(entity);
+		this.rootNode.getChildren().add(entity.getFXRepresentation());
 	}
 
-	private void bubbleHit(BubbleHitEvent event) {
-		System.out.println("Bubble" + event.getBubble() + "has been hit!");
+	// TODO: trigger this mechanism when win condition for one round is met
+	private void generateTask() {
+		// Delete old entities
+		this.rootNode.getChildren().clear();
+
+		// Readd player and background
+		this.rootNode.getChildren().add(this.player.getFXRepresentation());
+		this.rootNode.getChildren().add(this.gameBoardBackground);
+
+		/* TODO: tmp code */
+		addBubble();
+		addBubble();
+		addBubble();
+		addBubble();
+		addBubble();
+
+		// Move player to the front and background to the back
+		this.player.getFXRepresentation().toFront();
+		this.gameBoardBackground.toBack();
 	}
 
-	private class UpdateTimer extends AnimationTimer {
-		@Override
-		public void handle(long now) {
-			// Move all GameObjects
-			EventManager.dispatchEventAndWait(new MoveEvent(now));
-
-			// Update Game (Physics, logic etc)
-			EventManager.dispatchEventAndWait(new UpdateEvent(now));
-		}
+	private void bubbleHit() {
+		// TODO: Bubble was hit, validate input and generate new task
 	}
 }
