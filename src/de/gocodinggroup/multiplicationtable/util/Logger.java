@@ -1,6 +1,6 @@
 package de.gocodinggroup.multiplicationtable.util;
 
-import java.util.*;
+import java.time.*;
 
 /**
  * Logger class. Use this for logging stuff instead of System.out.println() ->
@@ -30,7 +30,7 @@ public class Logger {
 	 * @param message
 	 */
 	public void info(String message) {
-		if (this.logLevel == 0) System.out.println("INFO(" + new Date() + "): \"" + message + "\"");
+		if (this.logLevel == 0) System.out.println("INFO(" + LocalDateTime.now() + "): " + message);
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class Logger {
 	 * @param message
 	 */
 	public void warn(String message) {
-		if (this.logLevel < 2) System.err.println("WARN(" + new Date() + "): \"" + message + "\"");
+		if (this.logLevel < 2) System.err.println("WARN(" + LocalDateTime.now() + "): " + message);
 	}
 
 	/**
@@ -50,7 +50,7 @@ public class Logger {
 	 * @param message
 	 */
 	public void error(String message) {
-		System.err.print("ERROR(" + new Date() + "): \"" + message + "\"");
+		System.err.println("ERROR(" + LocalDateTime.now() + "): " + message);
 		System.exit(0);
 	}
 }

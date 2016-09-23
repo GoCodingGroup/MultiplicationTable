@@ -21,7 +21,7 @@ public class PlayerEntity extends GameEntity {
 
 	@Override
 	protected void move(long now) {
-		InputProvider input = GameController.getInputProvider();
+		InputParser input = GameController.getInputProvider();
 		this.locationX = input.getPlayerX();
 		this.locationY = input.getPlayerY();
 		((Circle) this.fxRepresentation).setCenterX(this.locationX);

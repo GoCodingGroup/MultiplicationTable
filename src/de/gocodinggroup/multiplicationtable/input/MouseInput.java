@@ -4,7 +4,7 @@ import de.gocodinggroup.multiplicationtable.util.*;
 import de.gocodinggroup.multiplicationtable.util.events.*;
 import javafx.scene.*;
 
-public class MouseInput implements InputProvider {
+public class MouseInput implements InputParser {
 	private int playerX, playerY;
 
 	public MouseInput(Node trackedNode) {

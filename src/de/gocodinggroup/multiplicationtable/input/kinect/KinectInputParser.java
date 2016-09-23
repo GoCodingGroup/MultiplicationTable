@@ -1,11 +1,13 @@
-package de.gocodinggroup.multiplicationtable.input;
+package de.gocodinggroup.multiplicationtable.input.kinect;
 
 import de.gocodinggroup.multiplicationtable.game.controller.*;
+import de.gocodinggroup.multiplicationtable.input.*;
 import de.gocodinggroup.multiplicationtable.util.*;
 import de.gocodinggroup.multiplicationtable.util.events.*;
+import de.gocodinggroup.multiplicationtable.util.record.*;
 import edu.ufl.digitalworlds.j4k.*;
 
-public class KinectInput extends J4KSDK implements InputProvider {
+public class KinectInputParser implements InputParser {
 	// Threshold in centimeters TODO: change this somehow to a more intelligent
 	// system
 	private static final int JUMP_THRESHOLD = 15;
@@ -34,35 +36,33 @@ public class KinectInput extends J4KSDK implements InputProvider {
 	// Measured groundY
 	private int groundY = 0;
 
-	public KinectInput() {
-		super();
+	private KinectControllerInterface kinectInterface;
 
-		// Start sensory data stuff
-		this.start(KinectInput.DEPTH | KinectInput.COLOR | KinectInput.SKELETON | KinectInput.XYZ
-				| KinectInput.PLAYER_INDEX);
+	public KinectInputParser(KinectControllerInterface kinectInterface) {
+		this.kinectInterface = kinectInterface;
 
-		// Make sure kinect will be disconnected properly on exit
-		Runtime.getRuntime().addShutdownHook(new Thread(() -> this.stop()));
+		EventManager.registerEventListenerForEvent(KinectDepthFrameEvent.class, e -> {
+			KinectDepthFrameEvent event = (KinectDepthFrameEvent) e;
+			this.onDepthFrameEvent(event.getDepthFrame(), event.getPlayerIndex(), event.getXyz(), event.getUv());
+		});
+		EventManager.registerEventListenerForEvent(KinectSkeletonFrameEvent.class, e -> {
+			KinectSkeletonFrameEvent event = (KinectSkeletonFrameEvent) e;
+			this.onSkeletonFrameEvent(event.getFlags(), event.getPositions(), event.getOrientations(), event.getState());
+		});
 	}
 
-	@Override
-	public void onColorFrameEvent(byte[] data) {
-		// Do nothing
-	}
-
-	@Override
 	public void onDepthFrameEvent(short[] depth_frame, byte[] player_index, float[] XYZ, float[] UV) {
 		// Do nothing
 	}
 
-	@Override
 	public void onSkeletonFrameEvent(boolean[] flags, float[] positions, float[] orientations, byte[] state) {
 		// Do we already have a tracked player that is playing ?!
 		boolean playerExists = false;
 		Skeleton skeleton;
 
-		for (int i = 0; i < getSkeletonCountLimit(); i++) {
-			skeleton = Skeleton.getSkeleton(i, flags, positions, orientations, state, this);
+		for (int i = 0; i < this.kinectInterface.getMaxSkeletonAmount(); i++) {
+			skeleton = Skeleton.getSkeleton(i, flags, positions, orientations, state,
+					this.kinectInterface.getKinectType());
 			if (skeleton.isTracked()) {
 				if (skeleton.getPlayerID() == PLAYER_ID) {
 					playerExists = true;
@@ -74,8 +74,9 @@ public class KinectInput extends J4KSDK implements InputProvider {
 		}
 
 		if (!playerExists) {
-			for (int i = 0; i < getSkeletonCountLimit(); i++) {
-				skeleton = Skeleton.getSkeleton(i, flags, positions, orientations, state, this);
+			for (int i = 0; i < this.kinectInterface.getMaxSkeletonAmount(); i++) {
+				skeleton = Skeleton.getSkeleton(i, flags, positions, orientations, state,
+						this.kinectInterface.getKinectType());
 				if (skeleton.isTracked()) {
 					skeleton.setPlayerID(PLAYER_ID);
 					doSkeletonCalculations(skeleton);
@@ -104,10 +105,8 @@ public class KinectInput extends J4KSDK implements InputProvider {
 		double[] rightFootPos = playerSkeleton.get3DJoint(Skeleton.FOOT_RIGHT);
 		int rightY = (int) (rightFootPos[1] * 100);
 
-		if (leftY < groundY)
-			groundY = leftY;
-		if (rightY < groundY)
-			groundY = rightY;
+		if (leftY < groundY) groundY = leftY;
+		if (rightY < groundY) groundY = rightY;
 
 		isLeftFootOnGround = true;
 		isRightFootOnGround = true;
@@ -118,10 +117,10 @@ public class KinectInput extends J4KSDK implements InputProvider {
 		if (rightY > getGroundPosForXZ(this.playerAvatarX, this.playerAvatarY) + JUMP_THRESHOLD)
 			isRightFootOnGround = false;
 
-		if (!isLeftFootOnGround && !isRightFootOnGround)
-			isPlayerInJumpMotion = true;
+		if (!isLeftFootOnGround && !isRightFootOnGround) isPlayerInJumpMotion = true;
 		else {
 			if (isPlayerInJumpMotion == true) {
+				// TODO: this does not seem to work with playback data :O
 				EventManager.dispatchEvent(new PlayerJumpedEvent(this.playerAvatarX, this.playerAvatarY));
 			}
 

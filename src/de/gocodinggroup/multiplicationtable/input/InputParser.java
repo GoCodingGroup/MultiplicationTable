@@ -1,8 +1,7 @@
 package de.gocodinggroup.multiplicationtable.input;
 
-public interface InputProvider {
+public interface InputParser {
 	public int getPlayerX();
 
 	public int getPlayerY();
-
 }

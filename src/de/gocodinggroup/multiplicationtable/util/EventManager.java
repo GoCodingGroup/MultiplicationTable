@@ -19,6 +19,11 @@ public class EventManager {
 		this.eventMap = new HashMap<>();
 	}
 
+	/**
+	 * Retrieve global event manager instance
+	 * 
+	 * @return
+	 */
 	private static EventManager getEventManager() {
 		if (manager == null) {
 			manager = new EventManager();
@@ -27,11 +32,23 @@ public class EventManager {
 		return manager;
 	}
 
+	/**
+	 * Register event listener for certain event
+	 * 
+	 * @param eventType
+	 * @param listener
+	 */
 	public static void registerEventListenerForEvent(Class<? extends Event> eventType, EventListener listener) {
 		EventManager eManager = getEventManager();
 		eManager.registerEventListener(eventType, listener);
 	}
 
+	/**
+	 * Remove event listener for certain event
+	 * 
+	 * @param eventType
+	 * @param listener
+	 */
 	public static void removeEventListenerForEvent(Class<? extends Event> eventType, EventListener listener) {
 		EventManager eManager = getEventManager();
 		eManager.removeEventListener(eventType, listener);
@@ -61,10 +78,8 @@ public class EventManager {
 
 	private void registerEventListener(Class<? extends Event> eventType, EventListener listener) {
 		List<EventListener> listeners;
-		if (eventMap.containsKey(eventType))
-			listeners = eventMap.get(eventType);
-		else
-			listeners = new ArrayList<>();
+		if (eventMap.containsKey(eventType)) listeners = eventMap.get(eventType);
+		else listeners = new ArrayList<>();
 
 		listeners.add(listener);
 		eventMap.put(eventType, listeners);
@@ -80,7 +95,6 @@ public class EventManager {
 
 	private void dispatch(Event event) {
 		Class<?> eventType = event.getClass();
-		if (eventMap.containsKey(eventType))
-			eventMap.get(eventType).forEach(listener -> listener.eventReceived(event));
+		if (eventMap.containsKey(eventType)) eventMap.get(eventType).forEach(listener -> listener.eventReceived(event));
 	}
 }
