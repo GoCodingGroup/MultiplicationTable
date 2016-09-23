@@ -15,40 +15,71 @@ import javafx.stage.*;
 
 /**
  * Class that acts as supreme leader of the game (Application Entry Point as
- * well)
+ * well). All Hail GameController!
+ *
  */
 public class GameController extends Application {
+	/** Width of the gamedisplay TODO: refactor */
 	public static final int WORLD_WIDTH = 1000;
+
+	/** Height of the gamedisplay TODO: refactor */
 	public static final int WORLD_HEIGHT = WORLD_WIDTH;
+
+	/**
+	 * Logger instance, which should be used for logging instead of system.out
+	 */
+	public static final Logger LOGGER = new Logger(Logger.LOG_DEBUG);
+
+	/**
+	 * Random number generator for this game TODO: does this have to be central?
+	 */
 	private static Random random;
 
-	// Player entity
-	private PlayerEntity player;
-
-	// Save this so that we can add BubbleEntites
-	private Group rootNode;
-
-	// Game Background
-	private Rectangle gameBoardBackground;
-
-	// Input provider for this game
+	/** Input provider for this game */
 	private static InputProvider input;
 
+	/** Player entity */
+	private PlayerEntity player;
+
+	/** Save this so that we can add BubbleEntites TODO: review */
+	private Group rootNode;
+
+	/** Game Background TODO: review */
+	private Rectangle gameBoardBackground;
+
+	/**
+	 * Application entry point
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		// Launch javaFX game
 		launch(args);
 	}
 
+	/**
+	 * Retrieve the game's random generator using this method
+	 * 
+	 * @return
+	 */
 	public static Random getRandom() {
 		if (random == null) random = new Random();
 
 		return random;
 	}
 
+	/**
+	 * Retrieve the game's input provider using this method
+	 * 
+	 * @return
+	 */
 	public static InputProvider getInputProvider() {
 		return input;
 	}
 
+	/**
+	 * Game setup method
+	 */
 	private void setupGame() {
 		// Register for the event that a bubble is hit, so that we can verify
 		// player input and generate a new task if wanted
@@ -105,13 +136,21 @@ public class GameController extends Application {
 		}
 	}
 
+	/**
+	 * Convenience method to add a bubble
+	 */
 	private void addBubble() {
 		BubbleEntity entity = new BubbleEntity(250, 250, 30, 30, "Halleluja!");
 		entity.setSpeed(getRandom().nextInt(8) - 4, getRandom().nextInt(8) - 4);
 		this.rootNode.getChildren().add(entity.getFXRepresentation());
 	}
 
-	// TODO: trigger this mechanism when win condition for one round is met
+	/**
+	 * Clears all bubbles and is eventually going to start a new round. TODO:
+	 * implement
+	 * 
+	 * TODO: trigger this mechanism when win condition for one round is met
+	 */
 	private void generateTask() {
 		// Delete old entities
 		this.rootNode.getChildren().clear();
@@ -132,7 +171,11 @@ public class GameController extends Application {
 		this.gameBoardBackground.toBack();
 	}
 
+	/**
+	 * Functionality unimplemented
+	 */
 	private void bubbleHit() {
 		// TODO: Bubble was hit, validate input and generate new task
+		LOGGER.error("Unimplemented method bubbleHit() in GameController!");
 	}
 }
