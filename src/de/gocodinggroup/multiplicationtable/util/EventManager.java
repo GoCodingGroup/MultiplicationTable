@@ -61,6 +61,9 @@ public class EventManager {
 	 * @param event
 	 */
 	public static void dispatchEventAndWait(Event event) {
+		// TODO remove:
+		System.out.println("EventManager.dispatchEventAndWait(): " + event.toString());
+		
 		EventManager eManager = getEventManager();
 		eManager.dispatch(event);
 	}
@@ -72,6 +75,9 @@ public class EventManager {
 	 * @param event
 	 */
 	public static void dispatchEvent(Event event) {
+		// TODO remove:
+		System.out.println("EventManager.dispatchEvent(): " + event.toString());
+		
 		EventManager eManager = getEventManager();
 		Platform.runLater(() -> eManager.dispatch(event));
 	}

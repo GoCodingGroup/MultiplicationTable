@@ -76,7 +76,8 @@ public class GameController extends Application {
 	 * @return
 	 */
 	public static Random getRandom() {
-		if (random == null) random = new Random();
+		if (random == null)
+			random = new Random();
 
 		return random;
 	}
@@ -199,7 +200,8 @@ public class GameController extends Application {
 	public void stop() throws Exception {
 		LOGGER.info("Exiting JavaFX Application");
 		this.kinectController.stop();
-		if (this.dataRecorder != null) this.dataRecorder.finish();
+		if (this.dataRecorder != null)
+			this.dataRecorder.finish();
 	}
 
 	/**

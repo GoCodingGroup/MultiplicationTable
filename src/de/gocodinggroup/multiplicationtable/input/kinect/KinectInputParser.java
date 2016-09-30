@@ -1,11 +1,14 @@
 package de.gocodinggroup.multiplicationtable.input.kinect;
 
-import de.gocodinggroup.multiplicationtable.game.controller.*;
-import de.gocodinggroup.multiplicationtable.input.*;
-import de.gocodinggroup.multiplicationtable.util.*;
-import de.gocodinggroup.multiplicationtable.util.events.*;
-import de.gocodinggroup.multiplicationtable.util.record.*;
-import edu.ufl.digitalworlds.j4k.*;
+import de.gocodinggroup.multiplicationtable.game.controller.GameController;
+import de.gocodinggroup.multiplicationtable.input.InputParser;
+import de.gocodinggroup.multiplicationtable.util.EventManager;
+import de.gocodinggroup.multiplicationtable.util.events.DepthDataEvent;
+import de.gocodinggroup.multiplicationtable.util.events.PlayerJumpedEvent;
+import de.gocodinggroup.multiplicationtable.util.events.XYZDataEvent;
+import de.gocodinggroup.multiplicationtable.util.record.KinectDepthFrameEvent;
+import de.gocodinggroup.multiplicationtable.util.record.KinectSkeletonFrameEvent;
+import edu.ufl.digitalworlds.j4k.Skeleton;
 
 public class KinectInputParser implements InputParser {
 	// Threshold in centimeters TODO: change this somehow to a more intelligent
@@ -38,6 +41,10 @@ public class KinectInputParser implements InputParser {
 
 	private KinectControllerInterface kinectInterface;
 
+	// counter Limiting XYZDATAEvents
+	private int counter = 1;
+	private static int COUNTER_TRESHOLD = 10;
+
 	public KinectInputParser(KinectControllerInterface kinectInterface) {
 		this.kinectInterface = kinectInterface;
 
@@ -47,12 +54,21 @@ public class KinectInputParser implements InputParser {
 		});
 		EventManager.registerEventListenerForEvent(KinectSkeletonFrameEvent.class, e -> {
 			KinectSkeletonFrameEvent event = (KinectSkeletonFrameEvent) e;
-			this.onSkeletonFrameEvent(event.getFlags(), event.getPositions(), event.getOrientations(), event.getState());
+			this.onSkeletonFrameEvent(event.getFlags(), event.getPositions(), event.getOrientations(),
+					event.getState());
 		});
 	}
 
 	public void onDepthFrameEvent(short[] depth_frame, byte[] player_index, float[] XYZ, float[] UV) {
-		// Do nothing
+
+		if (counter % COUNTER_TRESHOLD == 0) {
+			EventManager.dispatchEventAndWait(new XYZDataEvent(XYZ));
+			EventManager.dispatchEvent(new DepthDataEvent(depth_frame, this.kinectInterface.getDepthWidth()));
+			System.out.println("new Frame: ");
+			System.out.print(" Heigth: " + this.kinectInterface.getDepthHeight());
+			System.out.print(" Width: " + this.kinectInterface.getDepthWidth());
+		}
+		counter++;
 	}
 
 	public void onSkeletonFrameEvent(boolean[] flags, float[] positions, float[] orientations, byte[] state) {
@@ -105,8 +121,10 @@ public class KinectInputParser implements InputParser {
 		double[] rightFootPos = playerSkeleton.get3DJoint(Skeleton.FOOT_RIGHT);
 		int rightY = (int) (rightFootPos[1] * 100);
 
-		if (leftY < groundY) groundY = leftY;
-		if (rightY < groundY) groundY = rightY;
+		if (leftY < groundY)
+			groundY = leftY;
+		if (rightY < groundY)
+			groundY = rightY;
 
 		isLeftFootOnGround = true;
 		isRightFootOnGround = true;
@@ -117,7 +135,8 @@ public class KinectInputParser implements InputParser {
 		if (rightY > getGroundPosForXZ(this.playerAvatarX, this.playerAvatarY) + JUMP_THRESHOLD)
 			isRightFootOnGround = false;
 
-		if (!isLeftFootOnGround && !isRightFootOnGround) isPlayerInJumpMotion = true;
+		if (!isLeftFootOnGround && !isRightFootOnGround)
+			isPlayerInJumpMotion = true;
 		else {
 			if (isPlayerInJumpMotion == true) {
 				// TODO: this does not seem to work with playback data :O
