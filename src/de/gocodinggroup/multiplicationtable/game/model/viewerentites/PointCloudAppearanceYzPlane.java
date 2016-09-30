@@ -16,7 +16,6 @@ public class PointCloudAppearanceYzPlane implements ViewerEntity {
 	private static final double RADIUS = 1;
 	private ArrayList<Node> dataAsNodes;
 	private Group fxRepresentation;
-	private Group parent;
 	private static double scaling = 300;
 	private static double xShift = 0;
 	private static double yShift = 300;
@@ -29,12 +28,6 @@ public class PointCloudAppearanceYzPlane implements ViewerEntity {
 		fxRepresentation.getChildren().addAll(dataAsNodes);
 		EventManager.registerEventListenerForEvent(XYZDataEvent.class, (event) -> update((XYZDataEvent) event));
 	}
-	
-	PointCloudAppearanceYzPlane(List<Point3D> dataAsPoints3D, Group parent){
-		this(dataAsPoints3D);
-		this.parent = parent;
-	}
-	
 
 	private void constructAppearance(List<Point3D> dataAsPoints3D) {
 		for (Point3D point : dataAsPoints3D) {

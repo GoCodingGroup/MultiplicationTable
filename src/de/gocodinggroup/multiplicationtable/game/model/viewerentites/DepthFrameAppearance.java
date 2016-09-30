@@ -18,7 +18,6 @@ public class DepthFrameAppearance implements ViewerEntity {
 	private static double scaling = 1;
 	private static double xShift = 0;
 	private static double yShift = 0;
-	private static double zShift = 0;
 
 	private ArrayList<Shape> dataAsNodes;
 	private Group fxRepresentation;
@@ -42,10 +41,10 @@ public class DepthFrameAppearance implements ViewerEntity {
 	private Shape getFxRepresentationOfSinglePoint(Point3D point) {
 		Circle circle = new Circle();
 		circle.setRadius(RADIUS);
-		Color color = calculateColorCorrepondingToDepth(point);
 		circle.setCenterX(point.getX());
 		circle.setCenterY(point.getY());
-		circle.setFill(calculateColorCorrepondingToDepth(point));
+		Color depthColor = calculateColorCorrepondingToDepth(point);
+		circle.setFill(depthColor);
 		return circle;
 	}
 
@@ -57,11 +56,12 @@ public class DepthFrameAppearance implements ViewerEntity {
 		greyscaleInt = Math.min(greyscaleInt, 255);
 		greyscaleInt = Math.max(greyscaleInt, 0);
 		return Color.rgb(greyscaleInt, 0, 0);
-		
+
 	}
 
 	private void update(DepthDataEvent event) {
-		List<Point3D> dataAsPoints3D = SensorDataConverter.convertSensorDataFromDepthMapToArrayList(event.getDepthFrame(),event.getMaxWidth());
+		List<Point3D> dataAsPoints3D = SensorDataConverter
+				.convertSensorDataFromDepthMapToArrayList(event.getDepthFrame(), event.getMaxWidth());
 
 		Iterator<Point3D> iteratorPoints3D = dataAsPoints3D.iterator();
 		Iterator<Shape> iteratorNodes = dataAsNodes.iterator();
@@ -70,18 +70,13 @@ public class DepthFrameAppearance implements ViewerEntity {
 			// xAxis of Kinect is shown on y-axis of screen
 			double x = scaling * (point3D.getY()) + xShift;
 			// yAxis of Kinect is shown on x-axis of screen
-			double y = scaling * (point3D.getX()) + yShift; 
+			double y = scaling * (point3D.getX()) + yShift;
 
 			Shape nextNode = iteratorNodes.next();
-			/*
-			System.out.print("X: "+ x);
-			System.out.print(", Y: "+ y);
-			System.out.print(", depth: "+ calculateColorCorrepondingToDepth(point3D));
-			*/
 			nextNode.relocate(x, y);
 			nextNode.setFill(calculateColorCorrepondingToDepth(point3D));
 		}
-		
+
 	}
 
 	@Override

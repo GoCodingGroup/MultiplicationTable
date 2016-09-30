@@ -26,6 +26,7 @@ public class PlaneAppearanceYzPlane implements ViewerEntity {
 	private void update(XYZDataEvent event) {
 		PlaneApproximationImplXYZ planeApproximation = new PlaneApproximationImplXYZ(event.getXYZData());
 		Vector3D normal = planeApproximation.getNormal();
+		line.setStrokeWidth(STROKE_WIDTH);
 		line.setEndX(-normal.getZ()*LENGTH);
 		line.setEndY(normal.getY()*LENGTH);
 	}

@@ -3,7 +3,6 @@ package de.gocodinggroup.multiplicationtable.game.controller;
 import java.util.ArrayList;
 
 import de.gocodinggroup.multiplicationtable.game.model.viewerentites.DepthFrameAppearance;
-
 import de.gocodinggroup.multiplicationtable.game.model.viewerentites.PlaneAppearanceYzPlane;
 import de.gocodinggroup.multiplicationtable.game.model.viewerentites.PointCloudAppearanceYzPlane;
 import de.gocodinggroup.multiplicationtable.input.kinect.KinectControllerInterface;
@@ -22,33 +21,26 @@ import javafx.stage.Stage;
 public class KinectDataViewer extends Application {
 	public static final int VIEWER_WIDTH = 1200;
 	public static final int VIEWER_HEIGHT = 800;
+
 	private static KinectControllerInterface input;
-	
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
 		try {
+
 			input = new KinectRealController();
-			
+
 			Group root = new Group();
-			/*
-			 * if (input.getDeviceType() == input.MICROSOFT_KINECT_1) {
-			 * 
-			 * double angle = (double) -input.getElevationAngle(); kinectEntity
-			 * = new KinectEntity(VIEWER_WIDTH / 25, VIEWER_HEIGHT / 2,
-			 * VIEWER_WIDTH, VIEWER_HEIGHT, angle);
-			 * root.getChildren().add(kinectEntity.getFxRepresentation()); }
-			 */
+
 			ArrayList<Point3D> dummyXYZData = initializeData();
 			PointCloudAppearanceYzPlane pointCloudAppearance = new PointCloudAppearanceYzPlane(dummyXYZData);
-			//PointCloudAppearanceYzPlane2 pointCloudAppearance = new PointCloudAppearanceYzPlane2(root);
 			root.getChildren().add(pointCloudAppearance.getFxRepresentation());
 
 			ArrayList<Point3D> depthData = initializeData();
 			DepthFrameAppearance depthFrameAppearance = new DepthFrameAppearance(depthData);
 			root.getChildren().add(depthFrameAppearance.getFxRepresentation());
-			
+
 			PlaneAppearanceYzPlane planeAppearanceYzPlane = new PlaneAppearanceYzPlane();
 			root.getChildren().add(planeAppearanceYzPlane.getFxRepresentation());
 
@@ -75,8 +67,6 @@ public class KinectDataViewer extends Application {
 					root.getChildren().add(event.getGroup());
 				}
 			});
-			
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();
