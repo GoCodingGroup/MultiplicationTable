@@ -20,6 +20,9 @@ local.properties
 # Eclipse Core
 .project
 
+# Mac files
+*.DS_Store
+
 # External tool builders
 .externalToolBuilders/
 

@@ -96,6 +96,7 @@ mainClassName = 'de.gocodinggroup.multiplicationtable.game.controller.GameContro
 // Load all dependencies
 dependencies {
 	compile files('lib/jar/ufdw.jar')
+	compile group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
 
 	testCompile 'junit:junit:4.12'
 }
