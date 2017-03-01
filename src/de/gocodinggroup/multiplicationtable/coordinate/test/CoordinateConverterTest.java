@@ -2,10 +2,10 @@ package de.gocodinggroup.multiplicationtable.coordinate.test;
 
 import static org.junit.Assert.*;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
-import org.junit.Test;
+import org.apache.commons.math3.geometry.euclidean.threed.*;
+import org.junit.*;
 
-import de.gocodinggroup.multiplicationtable.coordinate.CoordinateConverter;
+import de.gocodinggroup.multiplicationtable.coordinate.*;
 
 public class CoordinateConverterTest {
 
@@ -32,7 +32,7 @@ public class CoordinateConverterTest {
 			//@formatter:on
 
 	@Test
-	public void testGetAbsoluteCoordinatesWithOriginUpperMiddle_AxesParallel() {
+	public void testConvertFromKinectToFloorCoordsWithOriginUpperMiddle_AxesParallel() {
 		Vector3D upperLeft = new Vector3D(-1, -1, 1);
 		Vector3D upperRight = new Vector3D(1, -1, 1);
 		Vector3D lowerLeft = new Vector3D(-1, -1, 2);
@@ -55,7 +55,7 @@ public class CoordinateConverterTest {
 	}
 
 	@Test
-	public void testGetAbsoluteCoordinatesWithOriginUpperMiddle_EqualOrigins_RotationAroundXaxis() {
+	public void testConvertFromKinectToFloorCoordsWithOriginUpperMiddle_EqualOrigins_RotationAroundXaxis() {
 		// Coordinates in Kinect coordinate system
 		Vector3D upperLeft = new Vector3D(-1, 0, 0);
 		Vector3D upperRight = new Vector3D(1, 0, 0);
@@ -77,7 +77,7 @@ public class CoordinateConverterTest {
 	}
 
 	@Test
-	public void testGetRelativeCoordinatesWithOriginUpperLeft_UpperLeftHasCoordinates_0_0_0() {
+	public void testConvertFromKinectToBeamerCoords_UpperLeftHasBeamerCoordinates_0_0_0() {
 		// Coordinates in Kinect coordinate system
 		Vector3D upperLeft = new Vector3D(-1, 0, 0);
 		Vector3D upperRight = new Vector3D(1, 0, 0);
@@ -88,7 +88,7 @@ public class CoordinateConverterTest {
 
 		Vector3D actualVector = converter.convertFromKinectToBeamerCoords(upperLeft);
 
-		// Coordinates in screen coordinates
+		// Coordinates in beamer coordinates
 		Vector3D expectedVector = new Vector3D(0, 0, 0);
 
 		assertEquals(expectedVector.getX(), actualVector.getX(), 0.000001);
@@ -97,7 +97,7 @@ public class CoordinateConverterTest {
 	}
 
 	@Test
-	public void testGetRelativeCoordinatesWithOriginUpperLeft_UpperRightHasCoordinates_1_0_0() {
+	public void testConvertFromKinectToBeamerCoords_UpperRightHasBeamerCoordinates_1_0_0() {
 		// Coordinates in Kinect coordinate system
 		Vector3D upperLeft = new Vector3D(-1, 0, 0);
 		Vector3D upperRight = new Vector3D(1, 0, 0);
@@ -108,16 +108,16 @@ public class CoordinateConverterTest {
 
 		Vector3D actualVector = converter.convertFromKinectToBeamerCoords(upperRight);
 
-		// Coordinates in screen coordinates
+		// Coordinates in beamer coordinates
 		Vector3D expectedVector = new Vector3D(1, 0, 0);
 
 		assertEquals(expectedVector.getX(), actualVector.getX(), 0.000001);
 		assertEquals(expectedVector.getY(), actualVector.getY(), 0.000001);
 		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.000001);
 	}
-	
+
 	@Test
-	public void testGetRelativeCoordinatesWithOriginUpperLeft_LowerLeftHasCoordinates_0_1_0() {
+	public void testConvertFromKinectToBeamerCoords_LowerLeftHasBeamerCoordinates_0_1_0() {
 		// Coordinates in Kinect coordinate system
 		Vector3D upperLeft = new Vector3D(-1, 0, 0);
 		Vector3D upperRight = new Vector3D(1, 0, 0);
@@ -126,13 +126,97 @@ public class CoordinateConverterTest {
 
 		CoordinateConverter converter = new CoordinateConverter(upperLeft, upperRight, lowerLeft, lowerRight);
 
-		Vector3D actualVector = converter.convertFromKinectToBeamerCoords(upperRight);
+		Vector3D actualVector = converter.convertFromKinectToBeamerCoords(lowerLeft);
 
-		// Coordinates in screen coordinates
-		Vector3D expectedVector = new Vector3D(1, 0, 0);
+		// Coordinates in beamer coordinates
+		Vector3D expectedVector = new Vector3D(0, 1, 0);
 
 		assertEquals(expectedVector.getX(), actualVector.getX(), 0.000001);
 		assertEquals(expectedVector.getY(), actualVector.getY(), 0.000001);
 		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.000001);
+	}
+
+	@Test
+	public void testConvertFromKinectToBeamerCoords_leftBoundaryAndRightBoundaryAreNotParallel_UpperLeftHasBeamerCoordinates_0_0_0() {
+		// Coordinates in Kinect coordinate system
+		Vector3D upperLeft = new Vector3D(-1, 0, 0);
+		Vector3D upperRight = new Vector3D(1, 0, 0);
+		Vector3D lowerLeft = new Vector3D(-2, 0, 1);
+		Vector3D lowerRight = new Vector3D(2, 0, 1);
+
+		CoordinateConverter converter = new CoordinateConverter(upperLeft, upperRight, lowerLeft, lowerRight);
+
+		Vector3D actualVector = converter.convertFromKinectToBeamerCoords(upperLeft);
+
+		// Coordinates in beamer coordinates
+		Vector3D expectedVector = new Vector3D(0, 0, 0);
+
+		assertEquals(expectedVector.getX(), actualVector.getX(), 0.000001);
+		assertEquals(expectedVector.getY(), actualVector.getY(), 0.000001);
+		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.000001);
+
+	}
+
+	@Test
+	public void testConvertFromKinectToBeamerCoords_leftBoundaryAndRightBoundaryAreNotParallel_LowerLeftHasBeamerCoordinates_0_1_0() {
+		// Coordinates in Kinect coordinate system
+		Vector3D upperLeft = new Vector3D(-1, 0, 0);
+		Vector3D upperRight = new Vector3D(1, 0, 0);
+		Vector3D lowerLeft = new Vector3D(-2, 0, 1);
+		Vector3D lowerRight = new Vector3D(2, 0, 1);
+
+		CoordinateConverter converter = new CoordinateConverter(upperLeft, upperRight, lowerLeft, lowerRight);
+
+		Vector3D actualVector = converter.convertFromKinectToBeamerCoords(lowerLeft);
+
+		// Coordinates in beamer coordinates
+		Vector3D expectedVector = new Vector3D(0, 1, 0);
+
+		assertEquals(expectedVector.getX(), actualVector.getX(), 0.000001);
+		assertEquals(expectedVector.getY(), actualVector.getY(), 0.000001);
+		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.000001);
+
+	}
+
+	@Test
+	public void testConvertFromKinectToBeamerCoords_leftBoundaryAndRightBoundaryAreNotParallel_LowerRightHasBeamerCoordinates_1_1_0() {
+		// Coordinates in Kinect coordinate system
+		Vector3D upperLeft = new Vector3D(-1, 0, 0);
+		Vector3D upperRight = new Vector3D(1, 0, 0);
+		Vector3D lowerLeft = new Vector3D(-2, 0, 1);
+		Vector3D lowerRight = new Vector3D(2, 0, 1);
+
+		CoordinateConverter converter = new CoordinateConverter(upperLeft, upperRight, lowerLeft, lowerRight);
+
+		Vector3D actualVector = converter.convertFromKinectToBeamerCoords(lowerRight);
+
+		// Coordinates in beamer coordinates
+		Vector3D expectedVector = new Vector3D(1, 1, 0);
+
+		assertEquals(expectedVector.getX(), actualVector.getX(), 0.000001);
+		assertEquals(expectedVector.getY(), actualVector.getY(), 0.000001);
+		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.000001);
+
+	}
+
+	@Test
+	public void testConvertFromKinectToBeamerCoords_NoParalles_UpperRightHasBeamerCoordinates_0_1_0() {
+		// Coordinates in Kinect coordinate system
+		Vector3D upperLeft = new Vector3D(-2, 0, 4.2);
+		Vector3D upperRight = new Vector3D(0, 0, 3);
+		Vector3D lowerLeft = new Vector3D(0, 0, 7);
+		Vector3D lowerRight = new Vector3D(2, 0, 4.2);
+
+		CoordinateConverter converter = new CoordinateConverter(upperLeft, upperRight, lowerLeft, lowerRight);
+
+		Vector3D actualVector = converter.convertFromKinectToBeamerCoords(upperRight);
+
+		// Coordinates in beamer coordinates
+		Vector3D expectedVector = new Vector3D(1, 0, 0);
+
+		assertEquals(expectedVector.getX(), actualVector.getX(), 0.001);
+		assertEquals(expectedVector.getY(), actualVector.getY(), 0.001);
+		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.001);
+
 	}
 }
