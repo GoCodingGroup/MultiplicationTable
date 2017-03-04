@@ -27,23 +27,28 @@ public class CoordinateConverter {
 	 * the left side (looking towards the beamer) is called LOWER-LEFT vertex.
 	 * The two other vertexes are named correspondingly UPPER-RIGHT and
 	 * LOWER-RIGHT vertex. The point in the middle of the upper-left vertex and
-	 * the upper-right vertex is called UPPER-MIDDLE. The three components of a
-	 * point in beamer coordinates are defined as follows. firstComponent:
-	 * fractionOfScreenWidth, secondComponent: fractionOfScreenHeight,
+	 * the upper-right vertex is called UPPER-MIDDLE.
+	 * 
+	 * The three components of a point in beamer coordinates are defined as
+	 * follows.
+	 * 
+	 * firstComponent: fractionOfScreenWidth,
+	 * 
+	 * secondComponent: fractionOfScreenHeight,
+	 * 
 	 * thirdComponent: altitude in Millimeters above floor.
 	 * 
 	 * The projection of the beamer must be flipped accordingly to the
-	 * perspective of the gamer described in the section SCREEN COORDINATE
-	 * SYSTEM.
+	 * perspective of the gamer.
 	 * 
 	 * 
 	 * FLOOR COORDINATE SYSTEM
 	 * 
 	 * The origin of the floor coordinate system is identical to the point
-	 * upper-middle described above. The z-Axis starts at upper-middle and runs
-	 * through the point lower-middle. The x-Axis starts at upper-middle and runs
-	 * through upper-right. The y-Axis is vertical to the ground. The distance is
-	 * expressed in millimeters.
+	 * UPPER-LEFT described above. The x-Axis starts at UPPER-LEFT and runs
+	 * through UPPER-RIGHT. The y-Axis is vertical to the floor. The z-Axis is
+	 * normal to x-Axis and y-Axis. The distance is expressed in millimeters.
+	 * 
 	 **/
 	/**
 	//@formatter:off
@@ -54,11 +59,11 @@ public class CoordinateConverter {
 	                V
 	           zAxis-Kinect
 	
-	     upperLeft-------upperRight----> xAxis-Playground
-	       /         |          \  
-	      /          |           \
-	     /           V            \
-	    /      zAxis-PlayGround    \
+	     upperLeft-------upperRight----> xAxis-Floor
+	       /|                   \  
+	      / |                    \
+	     /  V                     \
+	    / zAxis-Floor              \
 	   /                            \
 	  /                              \
 	 /                                \
@@ -101,16 +106,31 @@ public class CoordinateConverter {
 	 */
 	public Vector3D convertFromKinectToFloorCoords(Vector3D kinectPoint) {
 
-		// move to origin
-		Vector3D floorPoint = kinectPoint.subtract(upperMiddle);
+		// construct unitVectors of floor coordinate system
+		Vector3D unitVectorXDirectionFloor = upperRight.subtract(upperLeft).normalize();
+		Vector3D vectorFromUpperLeftToLowerLeft = lowerLeft.subtract(upperLeft);
+		Vector3D unitVectorYDirectionFloor = vectorFromUpperLeftToLowerLeft.crossProduct(unitVectorXDirectionFloor)
+				.normalize();
+		Vector3D unitVectorZDirectionFloor = unitVectorXDirectionFloor.crossProduct(unitVectorYDirectionFloor)
+				.normalize();
 
-		// define rotation
-		Vector3D zAxisKinect = new Vector3D(0, 0, 1);
-		Vector3D zAxisPlayGround = lowerMiddle.subtract(upperMiddle);
-		Rotation rotation = new Rotation(zAxisPlayGround, zAxisKinect);
-		// rotate
-		floorPoint = rotation.applyTo(floorPoint);
+		// construct floor coordinate planes
+		Plane xyPlaneFloor = new Plane(unitVectorZDirectionFloor, TOLERABLE_DISTANCE);
+		double offset = xyPlaneFloor.getOffset(upperLeft);
+		xyPlaneFloor = xyPlaneFloor.translate(unitVectorZDirectionFloor.scalarMultiply(offset));
+		double zFloorCoordinate = xyPlaneFloor.getOffset(kinectPoint);
 
+		Plane xzPlaneFloor = new Plane(unitVectorYDirectionFloor, TOLERABLE_DISTANCE);
+		offset = xzPlaneFloor.getOffset(upperLeft);
+		xzPlaneFloor = xzPlaneFloor.translate(unitVectorYDirectionFloor.scalarMultiply(offset));
+		double yFloorCoordinate = xzPlaneFloor.getOffset(kinectPoint);
+
+		Plane yzPlaneFloor = new Plane(unitVectorXDirectionFloor, TOLERABLE_DISTANCE);
+		offset = yzPlaneFloor.getOffset(upperLeft);
+		yzPlaneFloor = yzPlaneFloor.translate(unitVectorXDirectionFloor.scalarMultiply(offset));
+		double xFloorCoordinate = yzPlaneFloor.getOffset(kinectPoint);
+
+		Vector3D floorPoint = new Vector3D(xFloorCoordinate, yFloorCoordinate, zFloorCoordinate);
 		return floorPoint;
 	}
 
@@ -122,7 +142,7 @@ public class CoordinateConverter {
 	 *           the point in Kinect coordinates
 	 * @return corresponding point in beamer coordinates firstComponent:
 	 *         fractionOfScreenWidth, secondComponent: fractionOfScreenHeight,
-	 *         thirdComponent: altitude in Millimeters above floor
+	 *         thirdComponent: altitude in millimeters above floor
 	 */
 	public Vector3D convertFromKinectToBeamerCoords(Vector3D kinectPoint) {
 
@@ -136,7 +156,6 @@ public class CoordinateConverter {
 
 		double fractionOfScreenWidth = 0;
 		double fractionOfScreenHeight = 0;
-		double altitude = kinectPoint.getY();
 
 		// rectangle
 		if (upperBoundaryAndLowerBoundaryAreApproximatlyParallel()
@@ -165,6 +184,9 @@ public class CoordinateConverter {
 			intersection = vanishingLineKinectPoint.intersection(leftBoundary);
 			fractionOfScreenHeight = intersection.distance(upperLeft) / upperLeft.distance(lowerLeft);
 		}
+
+		Vector3D floorPoint = convertFromKinectToFloorCoords(kinectPoint);
+		double altitude = floorPoint.getY();
 
 		Vector3D beamerPoint = new Vector3D(fractionOfScreenWidth, fractionOfScreenHeight, altitude);
 

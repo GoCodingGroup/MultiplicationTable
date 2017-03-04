@@ -9,30 +9,38 @@ import de.gocodinggroup.multiplicationtable.coordinate.*;
 
 public class CoordinateConverterTest {
 
+	/**
 	//@formatter:off
-			/*
 
-			              Kinect----> xAxis-Kinect
-			                |
-			                |
-			                V
-			           zAxis-Kinect
-			
-			     upperLeft-------upperRight----> xAxis-Playground
-			       /         |          \  
-			      /          |           \
-			     /           V            \
-			    /      zAxis-PlayGround    \
-			   /                            \
-			  /                              \
-			 /                                \
-			 lowerLeft----------------lowerRight
-			
-			*/
-			//@formatter:on
+	              Kinect----> xAxis-Kinect
+	                |
+	                |
+	                V
+	           zAxis-Kinect
+	
+	     upperLeft-------upperRight----> xAxis-Floor
+	       /|                   \  
+	      / |                    \
+	     /  V                     \
+	    / zAxis-Floor              \
+	   /                            \
+	  /                              \
+	 /                                \
+	 lowerLeft----------------lowerRight
+	
+	
+	//@formatter:on
+	*/
 
 	@Test
-	public void testConvertFromKinectToFloorCoordsWithOriginUpperMiddle_AxesParallel() {
+	public void testConvertFromKinectToFloorCoords_FloorIsParallelToZXPlaneOfKinect() {
+		/*
+		//@formatter:off		   
+		 upperLeft----------------upperRight
+		     |                        |
+		 lowerLeft----------------lowerRight
+		//@formatter:on
+		*/
 		Vector3D upperLeft = new Vector3D(-1, -1, 1);
 		Vector3D upperRight = new Vector3D(1, -1, 1);
 		Vector3D lowerLeft = new Vector3D(-1, -1, 2);
@@ -40,40 +48,64 @@ public class CoordinateConverterTest {
 
 		CoordinateConverter converter = new CoordinateConverter(upperLeft, upperRight, lowerLeft, lowerRight);
 
-		Vector3D upperMiddle = getMiddle(upperLeft, upperRight);
-
-		Vector3D actualVector = converter.convertFromKinectToFloorCoords(upperMiddle);
+		// upperLeft
+		Vector3D actualVector = converter.convertFromKinectToFloorCoords(upperLeft);
 		Vector3D expectedVector = new Vector3D(0, 0, 0);
 		assertEquals(expectedVector, actualVector);
 
-	}
+		// upperRight
+		actualVector = converter.convertFromKinectToFloorCoords(upperRight);
+		expectedVector = new Vector3D(2, 0, 0);
+		assertEquals(expectedVector, actualVector);
 
-	private Vector3D getMiddle(Vector3D vector1, Vector3D vector2) {
-		Vector3D middle = vector1.add(vector2);
-		middle = middle.scalarMultiply(.5);
-		return middle;
+		// lowerRight
+		actualVector = converter.convertFromKinectToFloorCoords(lowerRight);
+		expectedVector = new Vector3D(2, 0, 1);
+		assertEquals(expectedVector, actualVector);
+
+		// lowerLeft
+		actualVector = converter.convertFromKinectToFloorCoords(lowerLeft);
+		expectedVector = new Vector3D(0, 0, 1);
+		assertEquals(expectedVector, actualVector);
 	}
 
 	@Test
-	public void testConvertFromKinectToFloorCoordsWithOriginUpperMiddle_EqualOrigins_RotationAroundXaxis() {
-		// Coordinates in Kinect coordinate system
+	public void testConvertFromKinectToFloorCoords_FloorIsNotParallelToZXPlaneOfKinect() {
+
 		Vector3D upperLeft = new Vector3D(-1, 0, 0);
 		Vector3D upperRight = new Vector3D(1, 0, 0);
-		Vector3D lowerLeft = new Vector3D(-1, -1, 1);
-		Vector3D lowerRight = new Vector3D(1, -1, 1);
-
-		Vector3D lowerMiddle = getMiddle(lowerLeft, lowerRight);
+		Vector3D lowerLeft = new Vector3D(-1, 1, 1);
+		Vector3D lowerRight = new Vector3D(1, 1, 1);
 
 		CoordinateConverter converter = new CoordinateConverter(upperLeft, upperRight, lowerLeft, lowerRight);
 
-		Vector3D actualVector = converter.convertFromKinectToFloorCoords(lowerMiddle);
-
-		// Coordinates in playground coordinate system
-		Vector3D expectedVector = new Vector3D(0, 0, Math.sqrt(2));
+		// upperLeft
+		Vector3D actualVector = converter.convertFromKinectToFloorCoords(upperLeft);
+		Vector3D expectedVector = new Vector3D(0, 0, 0);
 		assertEquals(expectedVector.getX(), actualVector.getX(), 0.000001);
 		assertEquals(expectedVector.getY(), actualVector.getY(), 0.000001);
 		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.000001);
 
+		// upperRight
+		actualVector = converter.convertFromKinectToFloorCoords(upperRight);
+		expectedVector = new Vector3D(2, 0, 0);
+		assertEquals(expectedVector.getX(), actualVector.getX(), 0.000001);
+		assertEquals(expectedVector.getY(), actualVector.getY(), 0.000001);
+		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.000001);
+
+		// lowerRight
+		actualVector = converter.convertFromKinectToFloorCoords(lowerRight);
+		expectedVector = new Vector3D(2, 0, Math.sqrt(2));
+		assertEquals(expectedVector.getX(), actualVector.getX(), 0.000001);
+		assertEquals(expectedVector.getY(), actualVector.getY(), 0.000001);
+		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.000001);
+
+		// lowerLeft
+		actualVector = converter.convertFromKinectToFloorCoords(lowerLeft);
+		expectedVector = new Vector3D(0, 0, Math.sqrt(2));
+		assertEquals(expectedVector.getX(), actualVector.getX(), 0.000001);
+		assertEquals(expectedVector.getY(), actualVector.getY(), 0.000001);
+		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.000001);
 	}
 
 	@Test
@@ -218,5 +250,26 @@ public class CoordinateConverterTest {
 		assertEquals(expectedVector.getY(), actualVector.getY(), 0.001);
 		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.001);
 
+	}
+
+	@Test
+	public void testConvertFromKinectToBeamerCoords_ZCoord() {
+
+		// Coordinates in Kinect coordinate system
+		Vector3D upperLeft = new Vector3D(-1, 0, 0);
+		Vector3D upperRight = new Vector3D(1, 0, 0);
+		Vector3D lowerLeft = new Vector3D(-1, 1, 1);
+		Vector3D lowerRight = new Vector3D(1, 1, 1);
+
+		CoordinateConverter converter = new CoordinateConverter(upperLeft, upperRight, lowerLeft, lowerRight);
+
+		Vector3D actualVector = converter.convertFromKinectToBeamerCoords(lowerRight);
+
+		// Coordinates in beamer coordinates
+		Vector3D expectedVector = new Vector3D(1, 1, 0);
+
+		assertEquals(expectedVector.getX(), actualVector.getX(), 0.001);
+		assertEquals(expectedVector.getY(), actualVector.getY(), 0.001);
+		assertEquals(expectedVector.getZ(), actualVector.getZ(), 0.001);
 	}
 }
