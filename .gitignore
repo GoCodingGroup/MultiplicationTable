@@ -63,3 +63,7 @@ local.properties
 # IntelliJ IDEA
 *.iml
 .idea/
+/.clover/
+
+#.gitignore
+.gitignore
