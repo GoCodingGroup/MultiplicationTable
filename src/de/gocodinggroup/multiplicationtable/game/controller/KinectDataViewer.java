@@ -1,22 +1,18 @@
 package de.gocodinggroup.multiplicationtable.game.controller;
 
-import java.util.ArrayList;
+import java.util.*;
 
-import de.gocodinggroup.multiplicationtable.game.model.viewerentites.DepthFrameAppearance;
-import de.gocodinggroup.multiplicationtable.game.model.viewerentites.PlaneAppearanceYzPlane;
-import de.gocodinggroup.multiplicationtable.game.model.viewerentites.PointCloudAppearanceYzPlane;
-import de.gocodinggroup.multiplicationtable.input.kinect.KinectControllerInterface;
-import de.gocodinggroup.multiplicationtable.input.kinect.KinectRealController;
-import de.gocodinggroup.multiplicationtable.util.events.UpdateSceneEvent;
-import javafx.application.Application;
-import javafx.event.EventHandler;
-import javafx.geometry.Point3D;
-import javafx.scene.Group;
-import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
+import de.gocodinggroup.multiplicationtable.game.model.viewerentites.*;
+import de.gocodinggroup.multiplicationtable.input.kinect.*;
+import de.gocodinggroup.multiplicationtable.util.events.*;
+import javafx.application.*;
+import javafx.event.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.input.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
+import javafx.stage.*;
 
 public class KinectDataViewer extends Application {
 	public static final int VIEWER_WIDTH = 1200;
@@ -63,7 +59,6 @@ public class KinectDataViewer extends Application {
 			scene.addEventHandler(UpdateSceneEvent.UPDATE_SCENE, new EventHandler<UpdateSceneEvent>() {
 				@Override
 				public void handle(UpdateSceneEvent event) {
-					System.out.println("handleEvent:");
 					root.getChildren().add(event.getGroup());
 				}
 			});

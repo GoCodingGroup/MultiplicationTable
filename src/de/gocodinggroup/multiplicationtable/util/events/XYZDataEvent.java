@@ -1,10 +1,10 @@
 package de.gocodinggroup.multiplicationtable.util.events;
 
-import java.util.ArrayList;
+import java.util.*;
 
-import de.gocodinggroup.multiplicationtable.game.model.viewerentites.SensorDataConverter;
-import de.gocodinggroup.multiplicationtable.util.Event;
-import javafx.geometry.Point3D;
+import de.gocodinggroup.multiplicationtable.game.model.viewerentites.*;
+import de.gocodinggroup.util.*;
+import javafx.geometry.*;
 
 /**
  * Event sent when KinectInput.onDepthFrameEvent() is executed
@@ -26,8 +26,8 @@ public class XYZDataEvent extends Event {
 	public float[] getXYZData() {
 		return this.xyzData;
 	}
-	
-	/** 
+
+	/**
 	 * @return the xyzData provided by kinect sensor as ArrayList of 3DPoints
 	 */
 	public ArrayList<Point3D> getXYZDataAsArrayListOf3DPoints() {

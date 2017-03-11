@@ -1,17 +1,13 @@
 package de.gocodinggroup.multiplicationtable.game.model.viewerentites;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import de.gocodinggroup.multiplicationtable.util.EventManager;
-import de.gocodinggroup.multiplicationtable.util.events.DepthDataEvent;
-import javafx.geometry.Point3D;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Shape;
+import de.gocodinggroup.multiplicationtable.util.events.*;
+import de.gocodinggroup.util.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
 
 public class DepthFrameAppearance implements ViewerEntity {
 	private static final double RADIUS = 1;
@@ -60,8 +56,8 @@ public class DepthFrameAppearance implements ViewerEntity {
 	}
 
 	private void update(DepthDataEvent event) {
-		List<Point3D> dataAsPoints3D = SensorDataConverter
-				.convertSensorDataFromDepthMapToArrayList(event.getDepthFrame(), event.getMaxWidth());
+		List<Point3D> dataAsPoints3D = SensorDataConverter.convertSensorDataFromDepthMapToArrayList(event.getDepthFrame(),
+				event.getMaxWidth());
 
 		Iterator<Point3D> iteratorPoints3D = dataAsPoints3D.iterator();
 		Iterator<Shape> iteratorNodes = dataAsNodes.iterator();

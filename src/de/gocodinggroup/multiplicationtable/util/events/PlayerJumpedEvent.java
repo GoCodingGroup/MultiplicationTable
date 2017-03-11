@@ -1,6 +1,6 @@
 package de.gocodinggroup.multiplicationtable.util.events;
 
-import de.gocodinggroup.multiplicationtable.util.*;
+import de.gocodinggroup.util.*;
 
 /**
  * Event sent when kinect logic senses the player jumping

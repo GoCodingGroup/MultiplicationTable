@@ -6,9 +6,8 @@ import java.util.*;
 import de.gocodinggroup.multiplicationtable.game.model.gameentites.*;
 import de.gocodinggroup.multiplicationtable.input.*;
 import de.gocodinggroup.multiplicationtable.input.kinect.*;
-import de.gocodinggroup.multiplicationtable.util.*;
 import de.gocodinggroup.multiplicationtable.util.events.*;
-import de.gocodinggroup.multiplicationtable.util.record.*;
+import de.gocodinggroup.util.*;
 import edu.ufl.digitalworlds.j4k.*;
 import javafx.animation.*;
 import javafx.application.*;
@@ -54,12 +53,6 @@ public class GameController extends Application {
 	/** The kinect controller */
 	private KinectControllerInterface kinectController;
 
-	/** capture/playback stuff */
-	private KinectDataRecorder dataRecorder;
-	private String saveFile;
-	private boolean shouldPlayback = false;
-	private boolean shouldCapture = false;
-
 	/**
 	 * Application entry point
 	 * 
@@ -76,8 +69,7 @@ public class GameController extends Application {
 	 * @return
 	 */
 	public static Random getRandom() {
-		if (random == null)
-			random = new Random();
+		if (random == null) random = new Random();
 
 		return random;
 	}
@@ -102,42 +94,13 @@ public class GameController extends Application {
 		// player input and generate a new task if wanted
 		EventManager.registerEventListenerForEvent(BubbleHitEvent.class, e -> bubbleHit());
 
-		// Check whether or not we should playback
-		if (!this.shouldPlayback) {
-			this.kinectController = new KinectRealController();
-			this.kinectController.startAndWait(J4KSDK.DEPTH | J4KSDK.SKELETON);
-		} else {
-			this.kinectController = new KinectPlaybackController(this.saveFile);
-			this.kinectController.startAndWait(J4KSDK.DEPTH | J4KSDK.SKELETON);
-		}
+		// Setup kinect controller
+		this.kinectController = new KinectRealController();
+		this.kinectController.startAndWait(J4KSDK.DEPTH | J4KSDK.SKELETON | J4KSDK.COLOR);
 
 		// Create input method (find way to not have to manually set this)
 		input = new KinectInputParser(this.kinectController);
 		// input = new MouseInput(this.rootNode);
-
-		// Check whether we should capture
-		if (this.shouldCapture) {
-			LOGGER.info("Activating kinect frame recording to file \"" + this.saveFile + "\"");
-			try {
-				this.dataRecorder = new KinectDataRecorder(this.kinectController, new StandardKinectDataCompressor(),
-						this.saveFile);
-				Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-					try {
-						this.kinectController.stop();
-						dataRecorder.finish();
-					} catch (IOException e) {
-						e.printStackTrace();
-						LOGGER.error("Finishing writing to file failed!");
-					}
-				}));
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-				LOGGER.error("could not find the file to  to");
-			} catch (IOException e) {
-				e.printStackTrace();
-				LOGGER.error("could not deal with record file");
-			}
-		}
 
 		// Setup background
 		this.gameBoardBackground = new Rectangle(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
@@ -156,16 +119,16 @@ public class GameController extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		/* Parse args */
-		Map<String, String> params = getParameters().getNamed();
-		for (String key : params.keySet()) {
-			if (key.equals("capture")) {
-				this.shouldCapture = true;
-				this.saveFile = params.get(key);
-			} else if (key.equals("playback")) {
-				this.shouldPlayback = true;
-				this.saveFile = params.get(key);
-			}
-		}
+		// Map<String, String> params = getParameters().getNamed();
+		// for (String key : params.keySet()) {
+		// if (key.equals("capture")) {
+		// this.shouldCapture = true;
+		// this.saveFile = params.get(key);
+		// } else if (key.equals("playback")) {
+		// this.shouldPlayback = true;
+		// this.saveFile = params.get(key);
+		// }
+		// }
 
 		/* Initialize Game */
 		primaryStage.setTitle("Multiplication Table");
@@ -200,8 +163,6 @@ public class GameController extends Application {
 	public void stop() throws Exception {
 		LOGGER.info("Exiting JavaFX Application");
 		this.kinectController.stop();
-		if (this.dataRecorder != null)
-			this.dataRecorder.finish();
 	}
 
 	/**

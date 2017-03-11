@@ -1,6 +1,6 @@
 package de.gocodinggroup.multiplicationtable.util.events;
 
-import de.gocodinggroup.multiplicationtable.util.*;
+import de.gocodinggroup.util.*;
 
 /**
  * Event sent to notify receivers that the game logic should be updated now

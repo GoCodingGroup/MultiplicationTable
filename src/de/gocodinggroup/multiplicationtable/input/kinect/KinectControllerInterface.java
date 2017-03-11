@@ -12,7 +12,7 @@ public interface KinectControllerInterface {
 	 * 
 	 * @return
 	 */
-	public int getMaxSkeletonAmount();
+	public int getSkeletonCountLimit();
 
 	/**
 	 * Retrieves the kinect device type

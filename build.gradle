@@ -1,4 +1,4 @@
-// Configure repo for junit download
+// Configure repo for j4k download
 buildscript {
 	repositories {
   		jcenter()
@@ -21,7 +21,7 @@ apply plugin: 'eclipse'
 apply plugin: 'application'
 //apply plugin: 'org.ajoberstar.grgit'
 
-// Configure java src dir (gradle will configure it wiredly by default)
+// Configure java src dir (gradle will configure it weirdly by default)
 sourceSets.main.java.srcDir 'src'
 
 /* _______________________________________________ */

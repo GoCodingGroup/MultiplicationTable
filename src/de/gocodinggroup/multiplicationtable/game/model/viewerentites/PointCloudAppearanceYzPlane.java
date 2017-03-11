@@ -1,16 +1,13 @@
 package de.gocodinggroup.multiplicationtable.game.model.viewerentites;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
-import de.gocodinggroup.multiplicationtable.util.EventManager;
-import de.gocodinggroup.multiplicationtable.util.events.XYZDataEvent;
-import javafx.geometry.Point3D;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+import de.gocodinggroup.multiplicationtable.util.events.*;
+import de.gocodinggroup.util.*;
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.paint.*;
+import javafx.scene.shape.*;
 
 public class PointCloudAppearanceYzPlane implements ViewerEntity {
 	private static final double RADIUS = 1;

@@ -1,7 +1,7 @@
 package de.gocodinggroup.multiplicationtable.util.events;
 
 import de.gocodinggroup.multiplicationtable.game.model.gameentites.*;
-import de.gocodinggroup.multiplicationtable.util.*;
+import de.gocodinggroup.util.*;
 
 public class BubbleHitEvent extends Event {
 	private BubbleEntity bubble;

@@ -1,7 +1,7 @@
 package de.gocodinggroup.multiplicationtable.input.kinect;
 
-import de.gocodinggroup.multiplicationtable.util.*;
-import de.gocodinggroup.multiplicationtable.util.record.*;
+import de.gocodinggroup.kinectdatarecorder.events.*;
+import de.gocodinggroup.util.*;
 import edu.ufl.digitalworlds.j4k.*;
 
 /**
@@ -30,7 +30,16 @@ public class KinectRealController extends J4KSDK implements KinectControllerInte
 
 	@Override
 	public void onColorFrameEvent(byte[] data) {
-		// Ignore this event
+		// Data started coming, therefore stop waiting.
+		if (this.lock != null) {
+			synchronized (this.lock) {
+				this.lock.notifyAll();
+				this.lock = null;
+			}
+		}
+
+		// Dispatch color frame event
+		EventManager.dispatchEventAndWait(new KinectColorFrameEvent(data));
 	}
 
 	@Override
@@ -49,13 +58,20 @@ public class KinectRealController extends J4KSDK implements KinectControllerInte
 
 	@Override
 	public void onSkeletonFrameEvent(boolean[] flags, float[] positions, float[] orientations, byte[] state) {
+		// Data started coming, therefore stop waiting.
+		if (this.lock != null) {
+			synchronized (this.lock) {
+				this.lock.notifyAll();
+				this.lock = null;
+			}
+		}
+
 		// Dispatch skeleton frame event
 		EventManager.dispatchEventAndWait(new KinectSkeletonFrameEvent(flags, positions, orientations, state));
 	}
 
-	@Override
-	public int getMaxSkeletonAmount() {
-		return this.getSkeletonCountLimit();
+	public int getSkeletonCountLimit() {
+		return super.getSkeletonCountLimit();
 	}
 
 	@Override

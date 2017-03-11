@@ -1,7 +1,7 @@
 package de.gocodinggroup.multiplicationtable.input;
 
-import de.gocodinggroup.multiplicationtable.util.*;
 import de.gocodinggroup.multiplicationtable.util.events.*;
+import de.gocodinggroup.util.*;
 import javafx.scene.*;
 
 public class MouseInput implements InputParser {

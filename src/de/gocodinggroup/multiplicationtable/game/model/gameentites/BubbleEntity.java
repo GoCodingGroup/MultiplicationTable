@@ -2,8 +2,8 @@ package de.gocodinggroup.multiplicationtable.game.model.gameentites;
 
 import de.gocodinggroup.multiplicationtable.game.controller.*;
 import de.gocodinggroup.multiplicationtable.game.model.*;
-import de.gocodinggroup.multiplicationtable.util.*;
 import de.gocodinggroup.multiplicationtable.util.events.*;
+import de.gocodinggroup.util.*;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.layout.*;
@@ -60,8 +60,7 @@ public class BubbleEntity extends GameEntity {
 	}
 
 	private void playerJumped(PlayerJumpedEvent e) {
-		if (isWithinBubble(e.getImpactLocationX(), e.getImpactLocationY()))
-			bubbleHit();
+		if (isWithinBubble(e.getImpactLocationX(), e.getImpactLocationY())) bubbleHit();
 	}
 
 	/* Convenience */
@@ -71,8 +70,7 @@ public class BubbleEntity extends GameEntity {
 		int locationX = this.getLocationX();
 		int locationY = this.getLocationY();
 
-		if (Math.sqrt((locationX - x) * (locationX - x) + (locationY - y) * (locationY - y)) <= radius)
-			return true;
+		if (Math.sqrt((locationX - x) * (locationX - x) + (locationY - y) * (locationY - y)) <= radius) return true;
 
 		return false;
 	}
@@ -80,8 +78,7 @@ public class BubbleEntity extends GameEntity {
 	private void bubbleHit() {
 		if (getSpeedX() == 0 && getSpeedY() == 0)
 			setSpeed(GameController.getRandom().nextInt(8) - 4, GameController.getRandom().nextInt(8) - 4);
-		else
-			setSpeed(0, 0);
+		else setSpeed(0, 0);
 
 		EventManager.dispatchEventAndWait(new BubbleHitEvent(this));
 	}
