@@ -78,22 +78,12 @@ public class CoordinateConverter {
 	private Vector3D lowerLeft;
 	private Vector3D upperRight;
 	private Vector3D upperLeft;
-	private Vector3D upperMiddle;
-	private Vector3D lowerMiddle;
 
 	public CoordinateConverter(Vector3D upperLeft, Vector3D upperRight, Vector3D lowerLeft, Vector3D lowerRight) {
 		this.upperLeft = upperLeft;
 		this.upperRight = upperRight;
 		this.lowerLeft = lowerLeft;
 		this.lowerRight = lowerRight;
-		this.upperMiddle = getMiddle(upperLeft, upperRight);
-		this.lowerMiddle = getMiddle(lowerLeft, lowerRight);
-	}
-
-	private Vector3D getMiddle(Vector3D vector1, Vector3D vector2) {
-		Vector3D middle = vector1.add(vector2);
-		middle = middle.scalarMultiply(.5);
-		return middle;
 	}
 
 	/**
