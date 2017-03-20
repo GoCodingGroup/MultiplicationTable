@@ -39,7 +39,7 @@ public class KinectRealController extends J4KSDK implements KinectControllerInte
 		}
 
 		// Dispatch color frame event
-		EventManager.dispatchEventAndWait(new KinectColorFrameEvent(data));
+		EventManager.dispatchAndWait(new KinectColorFrameEvent(data));
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class KinectRealController extends J4KSDK implements KinectControllerInte
 		}
 
 		// Dispatch depth frame event
-		EventManager.dispatchEventAndWait(new KinectDepthFrameEvent(depthFrame, playerIndex, xyz, uv));
+		EventManager.dispatchAndWait(new KinectDepthFrameEvent(depthFrame, playerIndex, xyz, uv));
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class KinectRealController extends J4KSDK implements KinectControllerInte
 		}
 
 		// Dispatch skeleton frame event
-		EventManager.dispatchEventAndWait(new KinectSkeletonFrameEvent(flags, positions, orientations, state));
+		EventManager.dispatchAndWait(new KinectSkeletonFrameEvent(flags, positions, orientations, state));
 	}
 
 	public int getSkeletonCountLimit() {

@@ -3,6 +3,7 @@ package de.gocodinggroup.multiplicationtable.game.controller;
 import java.io.*;
 import java.util.*;
 
+import de.gocodinggroup.kinectdatarecorder.record.*;
 import de.gocodinggroup.multiplicationtable.game.model.gameentites.*;
 import de.gocodinggroup.multiplicationtable.input.*;
 import de.gocodinggroup.multiplicationtable.input.kinect.*;
@@ -53,6 +54,9 @@ public class GameController extends Application {
 	/** The kinect controller */
 	private KinectControllerInterface kinectController;
 
+	/** This is for recording kinect data */
+	private KinectRecorder recorder;
+
 	/**
 	 * Application entry point
 	 * 
@@ -96,7 +100,7 @@ public class GameController extends Application {
 
 		// Setup kinect controller
 		this.kinectController = new KinectRealController();
-		this.kinectController.startAndWait(J4KSDK.DEPTH | J4KSDK.SKELETON | J4KSDK.COLOR);
+		this.kinectController.startAndWait(J4KSDK.DEPTH | J4KSDK.SKELETON | J4KSDK.COLOR | J4KSDK.XYZ);
 
 		// Create input method (find way to not have to manually set this)
 		input = new KinectInputParser(this.kinectController);
@@ -148,10 +152,10 @@ public class GameController extends Application {
 				@Override
 				public void handle(long now) {
 					// Move all GameObjects
-					EventManager.dispatchEventAndWait(new MoveEvent(now));
+					EventManager.dispatchAndWait(new MoveEvent(now));
 
 					// Update Game (Physics, logic etc)
-					EventManager.dispatchEventAndWait(new UpdateEvent(now));
+					EventManager.dispatchAndWait(new UpdateEvent(now));
 				}
 			}.start();
 		} catch (Exception e) {

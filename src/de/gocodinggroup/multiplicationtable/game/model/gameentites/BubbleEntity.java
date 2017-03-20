@@ -80,7 +80,7 @@ public class BubbleEntity extends GameEntity {
 			setSpeed(GameController.getRandom().nextInt(8) - 4, GameController.getRandom().nextInt(8) - 4);
 		else setSpeed(0, 0);
 
-		EventManager.dispatchEventAndWait(new BubbleHitEvent(this));
+		EventManager.dispatchAndWait(new BubbleHitEvent(this));
 	}
 
 	private void relocate() {

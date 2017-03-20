@@ -58,8 +58,8 @@ public class KinectInputParser implements InputParser {
 	public void onDepthFrameEvent(short[] depth_frame, byte[] player_index, float[] XYZ, float[] UV) {
 
 		if (counter % COUNTER_TRESHOLD == 0) {
-			EventManager.dispatchEventAndWait(new XYZDataEvent(XYZ));
-			EventManager.dispatchEvent(new DepthDataEvent(depth_frame, this.kinectInterface.getDepthWidth()));
+			EventManager.dispatchAndWait(new XYZDataEvent(XYZ));
+			EventManager.dispatchJavaFXEvent(new DepthDataEvent(depth_frame, this.kinectInterface.getDepthWidth()));
 		}
 		counter++;
 	}
@@ -130,7 +130,7 @@ public class KinectInputParser implements InputParser {
 		else {
 			if (isPlayerInJumpMotion == true) {
 				// TODO: this does not seem to work with playback data :O
-				EventManager.dispatchEvent(new PlayerJumpedEvent(this.playerAvatarX, this.playerAvatarY));
+				EventManager.dispatchJavaFXEvent(new PlayerJumpedEvent(this.playerAvatarX, this.playerAvatarY));
 			}
 
 			isPlayerInJumpMotion = false;

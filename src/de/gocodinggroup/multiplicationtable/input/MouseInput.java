@@ -17,7 +17,7 @@ public class MouseInput implements InputParser {
 		});
 
 		trackedNode.setOnMouseClicked((event) -> {
-			EventManager.dispatchEvent(new PlayerJumpedEvent(this.playerX, this.playerY));
+			EventManager.dispatchJavaFXEvent(new PlayerJumpedEvent(this.playerX, this.playerY));
 		});
 	}
 
