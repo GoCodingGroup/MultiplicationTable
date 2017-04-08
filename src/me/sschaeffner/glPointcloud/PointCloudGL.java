@@ -16,10 +16,10 @@ import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
+import de.gocodinggroup.kinectdatarecorder.events.*;
+import de.gocodinggroup.kinectdatarecorder.playback.*;
 import de.gocodinggroup.multiplicationtable.input.kinect.*;
-import de.gocodinggroup.multiplicationtable.util.*;
-import de.gocodinggroup.multiplicationtable.util.record.*;
-import edu.ufl.digitalworlds.j4k.*;
+import de.gocodinggroup.util.*;
 
 /**
  * @author sschaeffner
@@ -36,20 +36,20 @@ public class PointCloudGL {
 	private PointCloud pointCloud;
 
 	private KinectControllerInterface kinectController;
+	private KinectDepthPlaybacker playback;
 
 	private boolean initDone = false;
 
 	private double[] newData = null;
 
 	public static void main(String[] args) throws InterruptedException, IOException {
-
 		new PointCloudGL().run();
 	}
 
 	public PointCloudGL() throws InterruptedException, IOException {
 		EventManager.registerEventListenerForEvent(KinectDepthFrameEvent.class, e -> {
 			KinectDepthFrameEvent event = (KinectDepthFrameEvent) e;
-			this.onDepthFrameEvent(event.getDepthFrame(), event.getPlayerIndex(), event.getXyz(), event.getUv());
+			this.onDepthFrameEvent(event.getDepthFrame(), null, event.getXyz(), null);
 		});
 		EventManager.registerEventListenerForEvent(KinectSkeletonFrameEvent.class, e -> {
 			KinectSkeletonFrameEvent event = (KinectSkeletonFrameEvent) e;
@@ -60,8 +60,11 @@ public class PointCloudGL {
 		// KinectPlaybackController("./MultiplicationTableRecordings/semi_working_playback.cap");
 		// this.kinectController = new
 		// KinectPlaybackController("D:\\MultiplicationTableRecordings\\playback.cap");
-		this.kinectController = new KinectRealController();
-		this.kinectController.startAndWait(J4KSDK.DEPTH | J4KSDK.SKELETON | J4KSDK.XYZ);
+		// this.kinectController = new KinectRealController();
+		// this.kinectController.startAndWait(J4KSDK.DEPTH | J4KSDK.SKELETON |
+		// J4KSDK.XYZ);
+		playback = new KinectDepthPlaybacker(new File("C:\\Users\\Dominik\\Desktop\\recording.depth"));
+		playback.start();
 	}
 
 	private void onSkeletonFrameEvent(boolean[] flags, float[] positions, float[] orientations, byte[] state) {

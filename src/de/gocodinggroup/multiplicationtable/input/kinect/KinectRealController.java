@@ -53,7 +53,7 @@ public class KinectRealController extends J4KSDK implements KinectControllerInte
 		}
 
 		// Dispatch depth frame event
-		EventManager.dispatchAndWait(new KinectDepthFrameEvent(depthFrame, playerIndex, xyz, uv));
+		EventManager.dispatchAndWait(new KinectDepthFrameEvent(depthFrame, xyz));
 	}
 
 	@Override

@@ -47,7 +47,7 @@ public class KinectInputParser implements InputParser {
 
 		EventManager.registerEventListenerForEvent(KinectDepthFrameEvent.class, e -> {
 			KinectDepthFrameEvent event = (KinectDepthFrameEvent) e;
-			this.onDepthFrameEvent(event.getDepthFrame(), event.getPlayerIndex(), event.getXyz(), event.getUv());
+			this.onDepthFrameEvent(event.getDepthFrame(), null, event.getXyz(), null);
 		});
 		EventManager.registerEventListenerForEvent(KinectSkeletonFrameEvent.class, e -> {
 			KinectSkeletonFrameEvent event = (KinectSkeletonFrameEvent) e;
