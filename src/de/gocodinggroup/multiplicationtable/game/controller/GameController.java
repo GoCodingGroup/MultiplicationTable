@@ -102,6 +102,19 @@ public class GameController extends Application {
 		this.kinectController = new KinectRealController();
 		this.kinectController.startAndWait(J4KSDK.DEPTH | J4KSDK.SKELETON | J4KSDK.COLOR | J4KSDK.XYZ);
 
+		Thread.sleep(1000);
+		System.out.println("RECORDING");
+
+		// Initialize recorder
+		this.recorder = new KinectRecorder();
+		this.recorder.recordColorTo(60, new File("C:\\Users\\Dominik\\Desktop\\recording.color"));
+		this.recorder.recordDepthTo(60, new File("C:\\Users\\Dominik\\Desktop\\recording.depth"));
+		// this.recorder.recordDepthTo(new
+		// File("C:\\Users\\Dominik\\Desktop\\recording.depth"));
+		// this.recorder.recordSkeletonTo(new
+		// File("C:\\Users\\Dominik\\Desktop\\recording.color"));
+		this.recorder.startRecord();
+
 		// Create input method (find way to not have to manually set this)
 		input = new KinectInputParser(this.kinectController);
 		// input = new MouseInput(this.rootNode);
